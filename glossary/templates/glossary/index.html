@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>용어 사전</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-light: #f9fafe;
+            --bg-dark: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --accent: #2997ff;
+            --border: #e5e7eb;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        header {
+            text-align: center;
+
+            border-bottom: 2px solid var(--accent);
+        }
+        header h1 {
+            color: var(--text-primary);
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .search-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem; /* 버튼과 입력창 간격 */
+        }
+
+        .search-input {
+            flex: 1; /* 입력창의 너비를 유연하게 조정 */
+            max-width: 500px; /* 최대 너비 제한 */
+            padding: 0.7rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-button {
+            padding: 0.5rem; /* 버튼 크기를 입력창과 맞춤 */
+            background-color: var(--accent);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-button:hover {
+            background-color: #0077ed;
+        }
+        .control-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .control-button {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            background-color: var(--bg-light);
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .control-button:hover {
+            background-color: var(--accent);
+            color: #fff;
+        }
+        .type-section {
+            margin-bottom: 1.5rem;
+        }
+        .type-heading {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--text-primary);
+            cursor: pointer;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .type-heading:hover {
+            color: var(--accent);
+        }
+        .type-heading::after {
+            content: '▼';
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            transition: transform 0.3s ease;
+        }
+        .type-heading.collapsed::after {
+            transform: rotate(-90deg);
+        }
+        .terms-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+        }
+        .terms-list.expanded {
+            max-height: 500px;
+            opacity: 1;
+        }
+        .terms-list li {
+            margin: 0.5rem 0;
+        }
+        .term-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+        .term-link:hover {
+            background-color: rgba(41, 151, 255, 0.1);
+        }
+        footer {
+            text-align: center;
+            padding: 2rem 1rem;
+            background: var(--bg-light);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .scroll-button {
+            position: fixed;
+            right: 70px;
+            width: 30px; /* 기존 40px에서 30px로 줄임 */
+            height: 30px; /* 기존 40px에서 30px로 줄임 */
+            background-color: #1a73e8;
+            color: #fff;
+            font-size: 0.9rem; /* 기존 1.2rem에서 0.9rem로 줄임 */
+            text-align: center;
+            line-height: 30px; /* 높이에 맞춰 조정 */
+            border-radius: 50%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            opacity: 0;
+            transform: translateY(100px);
+            z-index: 1000;
+        }
+
+        .scroll-button.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scroll-button:hover {
+            background-color: #185abc;
+        }
+
+        .scroll-to-top {
+            bottom: 60px; /* 버튼 간 간격 조정 */
+        }
+
+        .scroll-to-bottom {
+            bottom: 20px;
+        }
+        aside {
+            flex: 1;
+            background: var(--bg-light);
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            overflow-y: auto;
+        }
+
+        aside h2 {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        aside ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        aside ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        aside ul li .term-link {
+            color: var(--accent);
+            font-size: 1rem;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        aside ul li .term-link:hover {
+            color: #0056b3;
+        }
+        .content-wrapper {
+            display: flex; /* Flexbox로 설정 */
+            gap: 1.5rem; /* 간격 조정 */
+            margin-top: 1rem; /* 상단 여백 추가 */
+        }
+
+        main {
+            flex: 3; /* 메인 콘텐츠가 3배의 공간 차지 */
+            background: var(--bg-light);
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .popular-terms {
+            flex: 1; /* 사이드바가 1배의 공간 차지 */
+            background: var(--bg-light);
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .popular-terms h2 {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .popular-terms ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .popular-terms li {
+            margin-bottom: 0.8rem;
+        }
+
+        .popular-terms .term-link {
+            color: var(--accent);
+            font-size: 1rem;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .popular-terms .term-link:hover {
+            color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>용어 사전</h1>
+        </header>
+        <div class="search-container">
+            <form method="get" action="">
+                <input type="text" name="q" class="search-input" placeholder="검색어를 입력하세요...">
+                <button type="submit" class="search-button">검색</button>
+            </form>
+        </div>
+        <div class="control-buttons">
+            <button class="control-button" onclick="foldAll()">접기</button>
+            <button class="control-button" onclick="unfoldAll()">펴기</button>
+        </div>
+
+        <div class="content-wrapper">
+            <main>
+                {% if terms_by_type %}
+                    {% for type, terms in terms_by_type.items %}
+                    <section class="type-section">
+                        <div class="type-heading">{{ type }}</div>
+                        <ul class="terms-list">
+                            {% for term in terms %}
+                            <li>
+                                <a href="{{ term.id }}/" class="term-link">{{ term.terms }}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </section>
+                    {% endfor %}
+                {% else %}
+                    <p>검색 결과가 없습니다.</p>
+                {% endif %}
+            </main>
+
+
+                <!-- Popular Terms Sidebar -->
+            <aside class="popular-terms">
+                <h2>자주 조회된 용어</h2>
+                <ul>
+                    {% for term in popular_terms %}
+                    <li>
+                        <a href="{{ term.id }}/" class="term-link">{{ term.terms }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </aside>
+
+
+
+        </div>
+    <footer>
+                &copy; 2024 용어 사전
+            </footer>
+     </div>
+    <button id="scrollToTop" class="scroll-button scroll-to-top" title="맨 위로">▲</button>
+    <button id="scrollToBottom" class="scroll-button scroll-to-bottom" title="맨 아래로">▼</button>
+
+    <script>
+                // 모든 섹션을 초기 상태로 펼침
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.type-heading').forEach(heading => heading.classList.remove('collapsed'));
+            document.querySelectorAll('.terms-list').forEach(list => list.classList.add('expanded'));
+        });
+
+        // 접기/펼치기 토글
+        document.querySelectorAll('.type-heading').forEach(heading => {
+            heading.addEventListener('click', () => {
+                heading.classList.toggle('collapsed');
+                const termsList = heading.nextElementSibling;
+                termsList.classList.toggle('expanded');
+            });
+        });
+        function foldAll() {
+            document.querySelectorAll('.type-heading').forEach(heading => heading.classList.add('collapsed'));
+            document.querySelectorAll('.terms-list').forEach(list => list.classList.remove('expanded'));
+        }
+
+        function unfoldAll() {
+            document.querySelectorAll('.type-heading').forEach(heading => heading.classList.remove('collapsed'));
+            document.querySelectorAll('.terms-list').forEach(list => list.classList.add('expanded'));
+        }
+        const scrollToTopButton = document.getElementById('scrollToTop');
+        const scrollToBottomButton = document.getElementById('scrollToBottom');
+
+        // 스크롤 시 버튼 표시/숨김
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 200) {
+                scrollToTopButton.classList.add('visible');
+            } else {
+                scrollToTopButton.classList.remove('visible');
+            }
+
+            if (window.scrollY + window.innerHeight < document.body.scrollHeight - 200) {
+                scrollToBottomButton.classList.add('visible');
+            } else {
+                scrollToBottomButton.classList.remove('visible');
+            }
+        });
+
+        // 최상단 이동
+        scrollToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // 최하단 이동
+        scrollToBottomButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: 'smooth'
+            });
+        });
+    </script>
+</body>
+</html>

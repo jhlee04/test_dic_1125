@@ -1,0 +1,114 @@
+Django 프로젝트를 다른 컴퓨터로 복사해서 사용하려면, 프로젝트와 의존성을 올바르게 설정해주는 몇 가지 단계가 필요합니다. 압축해서 이동한 뒤, 아래 절차를 따라 프로젝트를 다시 설정하세요.
+
+1. 프로젝트 파일 이동
+현재 Django 프로젝트 디렉토리를 압축:
+
+압축 대상:
+bash
+코드 복사
+djangoProject/
+├── glossary/          # 앱 디렉토리
+├── djangoProject/     # 프로젝트 설정 디렉토리
+├── manage.py          # Django 관리 명령어 실행 파일
+├── requirements.txt   # (필수) 의존성 파일
+├── db.sqlite3         # (선택) SQLite 데이터베이스 파일
+새 컴퓨터에서 압축을 해제.
+
+2. Python 및 Django 환경 설정
+새 컴퓨터에서 Django 프로젝트를 실행하기 위해 Python 환경과 필요한 패키지를 설치해야 합니다.
+
+1) Python 설치 확인
+Python이 설치되어 있는지 확인:
+bash
+코드 복사
+python --version
+또는
+bash
+코드 복사
+python3 --version
+없다면 Python 공식 웹사이트에서 설치.
+2) 가상환경 설정
+Django 프로젝트는 가상환경에서 실행하는 것이 좋습니다.
+
+새 컴퓨터에서 Django 프로젝트 디렉토리로 이동:
+
+bash
+코드 복사
+cd /path/to/djangoProject/
+가상환경 생성:
+
+bash
+코드 복사
+python -m venv venv
+가상환경 활성화:
+
+Windows:
+bash
+코드 복사
+venv\Scripts\activate
+Mac/Linux:
+bash
+코드 복사
+source venv/bin/activate
+3) 의존성 설치
+가상환경 활성화 후, 프로젝트의 requirements.txt 파일을 이용해 필요한 패키지를 설치:
+bash
+코드 복사
+pip install -r requirements.txt
+requirements.txt가 없을 경우: 이전 컴퓨터에서 생성:
+
+bash
+코드 복사
+pip freeze > requirements.txt
+3. 데이터베이스 설정
+1) SQLite 데이터베이스 사용 (기본)
+db.sqlite3 파일을 함께 복사한 경우, 아무 설정 없이 사용할 수 있습니다.
+2) 새로운 데이터베이스 설정
+만약 새로운 데이터베이스를 사용하려면:
+bash
+코드 복사
+python manage.py makemigrations
+python manage.py migrate
+4. Django 프로젝트 실행
+새 컴퓨터에서 가상환경 활성화:
+
+bash
+코드 복사
+venv\Scripts\activate   # Windows
+source venv/bin/activate  # Mac/Linux
+Django 개발 서버 실행:
+
+bash
+코드 복사
+python manage.py runserver
+브라우저에서 확인:
+
+URL: http://127.0.0.1:8000/
+5. 추가 확인 사항
+1) SECRET_KEY 보안
+프로젝트가 settings.py의 **SECRET_KEY**를 그대로 사용하면 보안상 위험이 있을 수 있습니다.
+새 SECRET_KEY를 생성하려면:
+python
+코드 복사
+from django.core.management.utils import get_random_secret_key
+print(get_random_secret_key())
+생성된 키를 settings.py의 SECRET_KEY에 복사.
+2) 외부 라이브러리 확인
+requirements.txt에 누락된 의존성이 있다면 직접 추가:
+bash
+코드 복사
+pip install <패키지명>
+pip freeze > requirements.txt
+3) ALLOWED_HOSTS 설정
+외부 컴퓨터에서 프로젝트에 접근하려면 settings.py의 **ALLOWED_HOSTS**를 수정:
+python
+코드 복사
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '<외부 IP 또는 도메인>']
+최종 워크플로우
+Django 프로젝트 디렉토리를 압축해서 이동.
+새 컴퓨터에서 Python과 Django 환경 설정.
+가상환경에서 의존성 설치 (pip install -r requirements.txt).
+데이터베이스를 유지하거나 새로 마이그레이션.
+python manage.py runserver로 실행.
+문제가 발생할 경우
+이전 컴퓨터와 새 컴퓨터의 환경 차이 때문에 에러가 발생할 수 있습니다. 발생한 에러 메시지를 알려주시면 추가로 도와드리겠습니다! 😊

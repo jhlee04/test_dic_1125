@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ term.terms }} - 용어 사전</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-light: #f9fafe;
+            --bg-dark: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --accent: #2997ff;
+            --border: #e5e7eb;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            background-color: var(--bg-dark);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: row;
+            max-height: 100vh; /* 화면 높이에 맞춤 */
+            position: sticky; /* 고정 */
+            top: 0; /* 상단에서 고정 */
+        }
+       .sidebar {
+            width: 25%;
+            background: var(--bg-light);
+            padding: 1rem;
+            border-right: 1px solid var(--border);
+            overflow-y: auto; /* 스크롤 가능 */
+            {#max-height: 100vh; /* 화면 높이에 맞춤 */#}
+            {#position: sticky; /* 고정 */#}
+            {#top: 0; /* 상단에서 고정 */#}
+        }
+        .sidebar h2 {
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent);
+        }
+        .type-section {
+            margin-bottom: 1rem;
+        }
+        .type-heading {
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+        .type-heading:hover {
+            background-color: rgba(41, 151, 255, 0.1);
+        }
+        .type-heading::after {
+            content: '▼';
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            transition: transform 0.3s ease;
+        }
+        .type-heading.active::after {
+            transform: rotate(180deg);
+        }
+        .terms-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            opacity: 0;
+        }
+        .terms-list.active {
+            max-height: 500px;
+            opacity: 1;
+        }
+        .terms-list li {
+            margin: 0.5rem 0;
+        }
+        .terms-list .term-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 1rem;
+            padding: 0.3rem 0.5rem;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        .terms-list .term-link:hover {
+            background-color: rgba(41, 151, 255, 0.1);
+        }
+
+        .content {
+            width: 70%;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .term-title {
+            color: var(--text-primary);
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent);
+        }
+        .term-full-title {
+            color: var(--text-secondary);
+            font-size: 1.3rem; /* Main title보다 약간 작게 설정 */
+            font-weight: 600; /* 적당한 강조 */
+            margin-bottom: 1rem; /* 아래와의 간격 */
+        }
+        .term-definition {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        .back-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .sidebar, .content {
+                width: 100%;
+            }
+            .sidebar {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar with term list -->
+        <aside class="sidebar">
+            <h2>용어 목록</h2>
+            {% for type, terms in terms_by_type.items %}
+            <section class="type-section">
+                <div class="type-heading">{{ type }}</div>
+                <ul class="terms-list">
+                    {% for term in terms %}
+                    <li>
+                        <a href="{% url 'term_detail' term.id %}" class="term-link">{{ term.terms }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </section>
+            {% endfor %}
+        </aside>
+
+        <!-- Content with selected term -->
+        <main class="content">
+            <h2 class="term-title">{{ term.terms }}</h2>
+            {% if term.full_term %}
+            <h3 class="term-full-title">{{ term.full_term }}</h3>
+            {% endif %}
+            <div class="term-definition">
+                {{ term.definition }}
+            </div>
+            <a href="/" class="back-link">첫 화면으로 돌아가기</a>
+        </main>
+    </div>
+
+    <script>
+        // Sidebar collapsible functionality
+        document.querySelectorAll('.type-heading').forEach(heading => {
+            heading.addEventListener('click', () => {
+                heading.classList.toggle('active');
+                const termsList = heading.nextElementSibling;
+                termsList.classList.toggle('active');
+            });
+        });
+    </script>
+</body>
+</html>
